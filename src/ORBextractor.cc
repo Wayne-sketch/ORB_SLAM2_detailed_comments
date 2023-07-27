@@ -1130,7 +1130,7 @@ void ORBextractor::ComputeKeyPointsOctTree(
                     for(vector<cv::KeyPoint>::iterator vit=vKeysCell.begin(); vit!=vKeysCell.end();vit++)
                     {
 						//NOTICE 到目前为止，这些角点的坐标都是基于图像cell的，现在我们要先将其恢复到当前的【坐标边界】下的坐标
-						//这样做是因为在下面使用八叉树法整理特征点的时候将会使用得到这个坐标
+						//这样做是因为在下面使用八叉树法整理特征点的时候将会使用得到的这个坐标
 						//在后面将会被继续转换成为在当前图层的扩充图像坐标系下的坐标
                         (*vit).pt.x+=j*wCell;
                         (*vit).pt.y+=i*hCell;
@@ -1667,27 +1667,30 @@ void ORBextractor::ComputePyramid(cv::Mat image)
         Mat temp(wholeSize, image.type()), masktemp;
         // mvImagePyramid 刚开始时是个空的vector<Mat>
 		// 把图像金字塔该图层的图像指针mvImagePyramid指向temp的中间部分（这里为浅拷贝，内存相同）
+        //Rect(EDGE_THRESHOLD, EDGE_THRESHOLD, sz.width, sz.height)：这是一个cv::Rect类型的对象，用于表示一个矩形区域。
+        //它的构造函数接受四个参数，分别是矩形的左上角横坐标、纵坐标，以及矩形的宽度和高度。这里表示从temp矩阵的(EDGE_THRESHOLD, EDGE_THRESHOLD)位置开始，
+        //截取宽度为sz.width，高度为sz.height的子矩阵作为ROI。
         mvImagePyramid[level] = temp(Rect(EDGE_THRESHOLD, EDGE_THRESHOLD, sz.width, sz.height));
 
         // Compute the resized image
 		//计算第0层以上resize后的图像
         if( level != 0 )
         {
-			//将上一层金字塔图像根据设定sz缩放到当前层级
-            resize(mvImagePyramid[level-1],	//输入图像
-				   mvImagePyramid[level], 	//输出图像
-				   sz, 						//输出图像的尺寸
-				   0, 						//水平方向上的缩放系数，留0表示自动计算
-				   0,  						//垂直方向上的缩放系数，留0表示自动计算
-				   cv::INTER_LINEAR);		//图像缩放的差值算法类型，这里的是线性插值算法
-
-            // //!  原代码mvImagePyramid 并未扩充，上面resize应该改为如下
-            // resize(image,	                //输入图像
+			// //将上一层金字塔图像根据设定sz缩放到当前层级
+            // resize(mvImagePyramid[level-1],	//输入图像
 			// 	   mvImagePyramid[level], 	//输出图像
 			// 	   sz, 						//输出图像的尺寸
 			// 	   0, 						//水平方向上的缩放系数，留0表示自动计算
 			// 	   0,  						//垂直方向上的缩放系数，留0表示自动计算
 			// 	   cv::INTER_LINEAR);		//图像缩放的差值算法类型，这里的是线性插值算法
+
+            //!  原代码mvImagePyramid 并未扩充，上面resize应该改为如下
+            resize(image,	                //输入图像
+				   mvImagePyramid[level], 	//输出图像
+				   sz, 						//输出图像的尺寸
+				   0, 						//水平方向上的缩放系数，留0表示自动计算
+				   0,  						//垂直方向上的缩放系数，留0表示自动计算
+				   cv::INTER_LINEAR);		//图像缩放的差值算法类型，这里的是线性插值算法
 
 			//把源图像拷贝到目的图像的中央，四面填充指定的像素。图片如果已经拷贝到中间，只填充边界
 			//这样做是为了能够正确提取边界的FAST角点
@@ -1717,8 +1720,8 @@ void ORBextractor::ComputePyramid(cv::Mat image)
 						   temp, EDGE_THRESHOLD, EDGE_THRESHOLD, EDGE_THRESHOLD, EDGE_THRESHOLD,
                            BORDER_REFLECT_101);            
         }
-        // //! 原代码mvImagePyramid 并未扩充，应该添加下面一行代码
-        // mvImagePyramid[level] = temp;
+        //! 原代码mvImagePyramid 并未扩充，应该添加下面一行代码
+        mvImagePyramid[level] = temp;
     }
 
 }

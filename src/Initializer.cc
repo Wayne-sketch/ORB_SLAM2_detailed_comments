@@ -582,10 +582,10 @@ float Initializer::CheckHomography(
     vector<bool> &vbMatchesInliers,     //匹配好的特征点对的Inliers标记
     float sigma)                        //估计误差
 {
-    // 说明：在已值n维观测数据误差服从N(0，sigma）的高斯分布时
+    // 说明：在已知n维观测数据误差服从N(0，sigma）的高斯分布时
     // 其误差加权最小二乘结果为  sum_error = SUM(e(i)^T * Q^(-1) * e(i))
-    // 其中：e(i) = [e_x,e_y,...]^T, Q维观测数据协方差矩阵，即sigma * sigma组成的协方差矩阵
-    // 误差加权最小二次结果越小，说明观测数据精度越高
+    // 其中：e(i) = [e_x,e_y,...]^T, Q为观测数据协方差矩阵，即sigma * sigma组成的协方差矩阵
+    // 误差加权最小二乘结果越小，说明观测数据精度越高
     // 那么，score = SUM((th - e(i)^T * Q^(-1) * e(i)))的分数就越高
     // 算法目标： 检查单应变换矩阵
     // 检查方式：通过H矩阵，进行参考帧和当前帧之间的双向投影，并计算起加权最小二乘投影误差
@@ -1441,7 +1441,7 @@ void Initializer::Triangulate(
  */
 void Initializer::Normalize(const vector<cv::KeyPoint> &vKeys, vector<cv::Point2f> &vNormalizedPoints, cv::Mat &T)                           //将特征点归一化的矩阵
 {
-    // 归一化的是这些点在x方向和在y方向上的一阶绝对矩（随机变量的期望）。
+    // 归一化的是这些点在x方向和在y方向上的一阶绝对矩（随机变量的期望）。？？
 
     // Step 1 计算特征点X,Y坐标的均值 meanX, meanY
     float meanX = 0;
