@@ -303,7 +303,7 @@ public:
     static float cx;        ///<x轴方向光心偏移
     static float cy;        ///<y轴方向光心偏移
     static float invfx;     ///<x轴方向焦距的逆
-    static float invfy;     ///<x轴方向焦距的逆
+    static float invfy;     ///<y轴方向焦距的逆
 
 	//TODO 目测是opencv提供的图像去畸变参数矩阵的，但是其具体组成未知
     ///去畸变参数
@@ -458,7 +458,7 @@ private:
     // Only for the RGB-D case. Stereo must be already rectified!
     // (called in the constructor).
 	/**
-     * @brief 用内参对特征点去畸变，结果报存在mvKeysUn中
+     * @brief 用内参对特征点去畸变，结果存在mvKeysUn中
      * 
      */
     void UndistortKeyPoints();
